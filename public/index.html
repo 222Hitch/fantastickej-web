@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fantastickej</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="header">
+        <h1>Voiceover hlášky</h1>
+        <p>Vyber jazyk → hlášku → rod → přehraj AI voiceover. Text se zobrazí i během přehrávání.</p>
+      </header>
+
+      <section class="card">
+        <div class="grid">
+          <label>
+            Jazyk
+            <select id="lang"></select>
+          </label>
+
+          <label>
+            Rod
+            <select id="gender">
+              <option value="m">Mužský</option>
+              <option value="f">Ženský</option>
+            </select>
+          </label>
+
+          <label>
+            Hláška
+            <select id="phrase"></select>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="play" class="btn">▶ Přehrát</button>
+          <button id="stop" class="btn btn-secondary" disabled>■ Stop</button>
+        </div>
+      </section>
+
+      <section class="screen" aria-live="polite">
+        <div class="screen-inner">
+          <div class="screen-label">Zobrazený text</div>
+          <div id="screenText" class="screen-text">Vyber nastavení a stiskni Přehrát.</div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span id="status">Připraveno.</span>
+      </footer>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
