@@ -6,50 +6,79 @@
     <title>Fantastickej</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
+
   <body>
     <main class="wrap">
+
+      <!-- ✅ HEADER -->
       <header class="header">
-        <h1>Voiceover hlášky</h1>
-        <p>Vyber jazyk → hlášku → rod → přehraj AI voiceover. Text se zobrazí i během přehrávání.</p>
+
+        <!-- ✅ Přepínač UI jazyka -->
+        <div class="uiLang">
+          <button id="uiCz" type="button">CZ</button>
+          <button id="uiEn" type="button">EN</button>
+        </div>
+
+        <h1 data-i18n="hero_title">Voiceover hlášky</h1>
+
+        <p data-i18n="hero_sub">
+          Vyber jazyk → hlášku → rod → přehraj AI voiceover.
+          Text se zobrazí i během přehrávání.
+        </p>
       </header>
 
+      <!-- ✅ FORM CARD -->
       <section class="card">
         <div class="grid">
+
           <label>
-            Jazyk
+            <span data-i18n="label_language">Jazyk</span>
             <select id="lang"></select>
           </label>
 
           <label>
-            Rod
+            <span data-i18n="label_gender">Rod</span>
             <select id="gender">
-              <option value="m">Mužský</option>
-              <option value="f">Ženský</option>
+              <option value="m" data-i18n="gender_m">Mužský</option>
+              <option value="f" data-i18n="gender_f">Ženský</option>
             </select>
           </label>
 
           <label>
-            Hláška
+            <span data-i18n="label_phrase">Hláška</span>
             <select id="phrase"></select>
           </label>
+
         </div>
 
         <div class="actions">
-          <button id="play" class="btn">▶ Přehrát</button>
-          <button id="stop" class="btn btn-secondary" disabled>■ Stop</button>
+          <button id="play" class="btn" data-i18n="btn_play">▶ Přehrát</button>
+          <button id="stop" class="btn btn-secondary" disabled data-i18n="btn_stop">
+            ■ Stop
+          </button>
         </div>
       </section>
 
+      <!-- ✅ SCREEN TEXT -->
       <section class="screen" aria-live="polite">
         <div class="screen-inner">
-          <div class="screen-label">Zobrazený text</div>
-          <div id="screenText" class="screen-text">Vyber nastavení a stiskni Přehrát.</div>
+
+          <div class="screen-label" data-i18n="screen_label">
+            Zobrazený text
+          </div>
+
+          <div id="screenText" class="screen-text" data-i18n="screen_default">
+            Vyber nastavení a stiskni Přehrát.
+          </div>
+
         </div>
       </section>
 
+      <!-- ✅ FOOTER -->
       <footer class="footer">
-        <span id="status">Připraveno.</span>
+        <span id="status" data-i18n="status_ready">Připraveno.</span>
       </footer>
+
     </main>
 
     <script src="/app.js"></script>
