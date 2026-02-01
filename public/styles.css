@@ -47,10 +47,13 @@ body {
 
 /* ✅ Header */
 .header {
-  position: relative; /* důležité pro absolutní přepínač */
+  position: relative;
   display: grid;
   gap: 10px;
   margin-bottom: 14px;
+
+  /* ✅ rezervujeme místo pro přepínač vpravo (aby se nepřekrýval s nadpisem) */
+  padding-right: 360px;
 }
 
 .header h1 {
@@ -67,13 +70,19 @@ body {
   max-width: 72ch;
 }
 
-/* ✅ UI language switch (CZ/EN) — vždy viditelný */
+/* Pokud je okno užší, neděláme rigidní rezervu a necháme vše přirozeně pod sebou */
+@media (max-width: 1000px) {
+  .header { padding-right: 0; }
+}
+
+/* ✅ UI language switch — desktop vpravo nahoře */
 .uiLang {
   position: absolute;
   top: 6px;
   right: 6px;
 
   display: inline-flex;
+  align-items: center;
   gap: 6px;
   padding: 6px;
 
@@ -82,13 +91,22 @@ body {
   background: rgba(0,0,0,.24);
   box-shadow: var(--shadow2);
   backdrop-filter: blur(10px);
+
+  /* ✅ ať se neroztáhne přes půl stránky + když je jazyků moc, dá se horizontálně scrollovat */
+  max-width: min(520px, 60vw);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.uiLang::-webkit-scrollbar { display: none; }
 
 .uiLang button {
   cursor: pointer;
   border: 0;
   background: transparent;
-  color: rgba(255,255,255,.75);
+  color: rgba(255,255,255,.78);
 
   padding: 8px 12px;
   border-radius: 999px;
@@ -101,12 +119,12 @@ body {
 .uiLang button:hover {
   transform: translateY(-1px);
   background: rgba(255,255,255,.08);
-  color: white;
+  color: #fff;
 }
 
 .uiLang button.active {
   background: rgba(255,255,255,.18);
-  color: white;
+  color: #fff;
 }
 
 .uiLang button:focus-visible {
@@ -234,22 +252,32 @@ select:focus {
   font-size: 13px;
 }
 
-/* ✅ Mobile / small screens */
+/* ✅ Tablet / small screens */
 @media (max-width: 820px) {
   .grid { grid-template-columns: 1fr; }
   .card { padding: 16px; }
 }
 
+/* ✅ Mobile: přepínač dole (fixed pill) */
 @media (max-width: 600px) {
-  .wrap { padding: 18px 14px 74px; }
+  .wrap { padding: 18px 14px 84px; } /* extra prostor kvůli floating přepínači */
 
-  /* Přepínač na mobilu přesuneme dolů doprava jako floating pill */
+  .header { padding-right: 0; }
+
   .uiLang {
     position: fixed;
     top: auto;
     bottom: 14px;
     right: 14px;
-    z-index: 20;
+    left: 14px;
+
+    z-index: 50;
+    max-width: none;
+    justify-content: center;
+
+    /* lehce výraznější na mobilu */
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.28);
   }
 
   .uiLang button {
