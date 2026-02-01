@@ -6,6 +6,98 @@ const elStop = document.getElementById("stop");
 const elScreen = document.getElementById("screenText");
 const elStatus = document.getElementById("status");
 
+// --- UI language switch (CZ/EN) ---
+const elUiCz = document.getElementById("uiCz");
+const elUiEn = document.getElementById("uiEn");
+
+const UI = {
+  cs: {
+    hero_title: "Voiceover hlášky",
+    hero_sub:
+      "Vyber jazyk → hlášku → rod → přehraj AI voiceover. Text se zobrazí i během přehrávání.",
+    label_language: "Jazyk",
+    label_gender: "Rod",
+    label_phrase: "Hláška",
+    gender_m: "Mužský",
+    gender_f: "Ženský",
+    btn_play: "▶ Přehrát",
+    btn_stop: "■ Stop",
+    screen_label: "Zobrazený text",
+    screen_default: "Vyber nastavení a stiskni Přehrát.",
+    status_ready: "Připraveno.",
+    status_generating: "Generuji voiceover…",
+    status_done: "Hotovo.",
+    status_synth_error: "Chyba při syntéze.",
+    status_error_prefix: "Chyba: ",
+    status_stopped: "Zastaveno.",
+    err_sdk_load: "Nepodařilo se načíst Azure Speech SDK.",
+  },
+  en: {
+    hero_title: "Phrase voiceover",
+    hero_sub:
+      "Choose language → phrase → gender → play AI voiceover. The text is shown during playback.",
+    label_language: "Language",
+    label_gender: "Gender",
+    label_phrase: "Phrase",
+    gender_m: "Male",
+    gender_f: "Female",
+    btn_play: "▶ Play",
+    btn_stop: "■ Stop",
+    screen_label: "Displayed text",
+    screen_default: "Choose options and press Play.",
+    status_ready: "Ready.",
+    status_generating: "Generating voiceover…",
+    status_done: "Done.",
+    status_synth_error: "Synthesis error.",
+    status_error_prefix: "Error: ",
+    status_stopped: "Stopped.",
+    err_sdk_load: "Failed to load Azure Speech SDK.",
+  },
+};
+
+let uiLang = localStorage.getItem("uiLang") || "cs";
+
+function t(key) {
+  return (UI[uiLang] && UI[uiLang][key]) || UI.cs[key] || key;
+}
+
+function applyUiLang(lang) {
+  uiLang = lang;
+  localStorage.setItem("uiLang", uiLang);
+
+  // active button styles
+  if (elUiCz && elUiEn) {
+    elUiCz.classList.toggle("active", uiLang === "cs");
+    elUiEn.classList.toggle("active", uiLang === "en");
+  }
+
+  // set <html lang="">
+  document.documentElement.lang = uiLang === "cs" ? "cs" : "en";
+
+  // translate all [data-i18n]
+  const dict = UI[uiLang] || UI.cs;
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const key = node.getAttribute("data-i18n");
+    if (!key) return;
+    if (dict[key] == null) return;
+    node.textContent = dict[key];
+  });
+
+  // keep screen/status in sync if still default/ready text
+  const defaultCs = UI.cs.screen_default;
+  const defaultEn = UI.en.screen_default;
+  if (elScreen && (elScreen.textContent === defaultCs || elScreen.textContent === defaultEn)) {
+    elScreen.textContent = t("screen_default");
+  }
+
+  const readyCs = UI.cs.status_ready;
+  const readyEn = UI.en.status_ready;
+  if (elStatus && (elStatus.textContent === readyCs || elStatus.textContent === readyEn)) {
+    elStatus.textContent = t("status_ready");
+  }
+}
+
+// --- Speech logic ---
 let synthesizer = null;
 
 const LANGS = [
@@ -16,7 +108,6 @@ const LANGS = [
   { code: "pt-PT", label: "Português (PT)" },
   { code: "hi-IN", label: "हिन्दी (HI)" },
 
-  // 4 nejpoužívanější “asijské” dle tvého zadání:
   { code: "zh-CN", label: "中文 (简体) (ZH-CN)" },
   { code: "zh-TW", label: "中文 (繁體) (ZH-TW)" },
   { code: "ja-JP", label: "日本語 (JA)" },
@@ -31,8 +122,6 @@ const PHRASES = [
   { key: "E", label: "E) Všechno bude" },
 ];
 
-// Texty (CZ jako “master”), překlady zatím základní a srozumitelné.
-// Když budeš chtít, doladíme nuance (tykání/vykání, humor).
 const TEXT = {
   A: {
     cs: { m: "Jseš fantastickej.", f: "Jseš fantastická." },
@@ -76,7 +165,10 @@ const TEXT = {
     en: { m: "You’re lucky I’m walking by right now.", f: "You’re lucky I’m walking by right now." },
     es: { m: "Tienes suerte de que pase justo ahora.", f: "Tienes suerte de que pase justo ahora." },
     pt: { m: "Você tem sorte de eu estar passando agora.", f: "Você tem sorte de eu estar passando agora." },
-    hi: { m: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।", f: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।" },
+    hi: {
+      m: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।",
+      f: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।",
+    },
     "zh-CN": { m: "你真走运，我正好路过。", f: "你真走运，我正好路过。" },
     "zh-TW": { m: "你真走運，我正好路過。", f: "你真走運，我正好路過。" },
     ja: { m: "ちょうど通りかかった私に感謝して。", f: "ちょうど通りかかった私に感謝して。" },
@@ -114,11 +206,12 @@ function currentText() {
   const phraseKey = elPhrase.value;
   const gender = elGender.value;
   const lang = langKeyFromCode(elLang.value);
-  const t = TEXT[phraseKey]?.[lang]?.[gender] || TEXT[phraseKey]?.en?.[gender] || "";
-  return t;
+  return TEXT[phraseKey]?.[lang]?.[gender] || TEXT[phraseKey]?.en?.[gender] || "";
 }
 
 function fillSelects() {
+  // languages
+  elLang.innerHTML = "";
   for (const l of LANGS) {
     const opt = document.createElement("option");
     opt.value = l.code;
@@ -127,6 +220,8 @@ function fillSelects() {
   }
   elLang.value = "cs-CZ";
 
+  // phrases
+  elPhrase.innerHTML = "";
   for (const p of PHRASES) {
     const opt = document.createElement("option");
     opt.value = p.key;
@@ -148,7 +243,7 @@ async function loadSpeechSDK() {
     const s = document.createElement("script");
     s.src = "https://aka.ms/csspeech/jsbrowserpackageraw";
     s.onload = () => resolve(window.SpeechSDK);
-    s.onerror = () => reject(new Error("Nepodařilo se načíst Azure Speech SDK."));
+    s.onerror = () => reject(new Error(t("err_sdk_load")));
     document.head.appendChild(s);
   });
 }
@@ -160,7 +255,6 @@ async function getToken() {
 }
 
 function chooseVoice(langCode, gender) {
-  // zjednodušený výběr “příjemných” default hlasů
   const map = {
     "cs-CZ": { m: "cs-CZ-AntoninNeural", f: "cs-CZ-VlastaNeural" },
     "de-DE": { m: "de-DE-ConradNeural", f: "de-DE-KatjaNeural" },
@@ -180,7 +274,7 @@ function chooseVoice(langCode, gender) {
 async function stopPlayback() {
   elStop.disabled = true;
   elPlay.disabled = false;
-  elStatus.textContent = "Zastaveno.";
+  elStatus.textContent = t("status_stopped");
   try {
     if (synthesizer) {
       synthesizer.close();
@@ -195,7 +289,7 @@ async function play() {
 
   const text = currentText();
   updateScreen();
-  elStatus.textContent = "Generuji voiceover…";
+  elStatus.textContent = t("status_generating");
 
   const SpeechSDK = await loadSpeechSDK();
   const { token, region } = await getToken();
@@ -211,9 +305,9 @@ async function play() {
       text,
       (result) => {
         if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-          elStatus.textContent = "Hotovo.";
+          elStatus.textContent = t("status_done");
         } else {
-          elStatus.textContent = "Chyba při syntéze.";
+          elStatus.textContent = t("status_synth_error");
           console.error(result.errorDetails);
         }
         stopPlayback();
@@ -221,7 +315,7 @@ async function play() {
       },
       (err) => {
         console.error(err);
-        elStatus.textContent = "Chyba: " + (err?.message || String(err));
+        elStatus.textContent = t("status_error_prefix") + (err?.message || String(err));
         stopPlayback();
         resolve();
       }
@@ -229,10 +323,17 @@ async function play() {
   });
 }
 
+// listeners
 elLang.addEventListener("change", updateScreen);
 elGender.addEventListener("change", updateScreen);
 elPhrase.addEventListener("change", updateScreen);
 elPlay.addEventListener("click", play);
 elStop.addEventListener("click", stopPlayback);
 
+// init
 fillSelects();
+
+// --- init UI language switch ---
+if (elUiCz) elUiCz.addEventListener("click", () => applyUiLang("cs"));
+if (elUiEn) elUiEn.addEventListener("click", () => applyUiLang("en"));
+applyUiLang(uiLang);
