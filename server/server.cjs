@@ -1,15 +1,15 @@
 require("dotenv").config();
-console.log("STARTING server.js", new Date().toISOString());
-process.on("exit", (code) => console.log("PROCESS EXIT", code));
-
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+
+// ✅ Servíruj frontend z /public
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,12 +19,14 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/token", async (req, res) => {
   try {
-    const key = process.env.AZURE_SPEECH_KEY;
-    const region = process.env.AZURE_SPEECH_REGION;
+    // ✅ bere buď AZURE_* nebo SPEECH_* (ty máš SPEECH_*)
+    const key = process.env.AZURE_SPEECH_KEY || process.env.SPEECH_KEY;
+    const region = process.env.AZURE_SPEECH_REGION || process.env.SPEECH_REGION;
 
     if (!key || !region) {
       return res.status(500).json({
-        error: "Missing AZURE_SPEECH_KEY or AZURE_SPEECH_REGION in .env",
+        error:
+          "Missing AZURE_SPEECH_KEY/AZURE_SPEECH_REGION (or SPEECH_KEY/SPEECH_REGION) in .env",
       });
     }
 
@@ -49,12 +51,13 @@ app.get("/api/token", async (req, res) => {
   }
 });
 
-const server = app.listen(PORT, () => {
+// ✅ když někdo otevře "/", vrať index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
   console.log(`   Health: http://localhost:${PORT}/api/health`);
   console.log(`   Token:  http://localhost:${PORT}/api/token`);
-});
-
-server.on("error", (err) => {
-  console.error("LISTEN ERROR:", err);
 });
