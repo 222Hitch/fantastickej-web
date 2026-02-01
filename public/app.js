@@ -1,3 +1,6 @@
+// ============================
+// Elements
+// ============================
 const elLang = document.getElementById("lang");
 const elGender = document.getElementById("gender");
 const elPhrase = document.getElementById("phrase");
@@ -6,10 +9,13 @@ const elStop = document.getElementById("stop");
 const elScreen = document.getElementById("screenText");
 const elStatus = document.getElementById("status");
 
-// --- UI language switch (CZ/EN) ---
-const elUiCz = document.getElementById("uiCz");
+// UI language switch (ONLY CZ / EN)
+const elUiCs = document.getElementById("uiCs");
 const elUiEn = document.getElementById("uiEn");
 
+// ============================
+// UI dictionaries (CZ/EN only)
+// ============================
 const UI = {
   cs: {
     hero_title: "Voiceover hlášky",
@@ -30,7 +36,6 @@ const UI = {
     status_synth_error: "Chyba při syntéze.",
     status_error_prefix: "Chyba: ",
     status_stopped: "Zastaveno.",
-    err_sdk_load: "Nepodařilo se načíst Azure Speech SDK.",
   },
   en: {
     hero_title: "Phrase voiceover",
@@ -51,53 +56,12 @@ const UI = {
     status_synth_error: "Synthesis error.",
     status_error_prefix: "Error: ",
     status_stopped: "Stopped.",
-    err_sdk_load: "Failed to load Azure Speech SDK.",
   },
 };
 
-let uiLang = localStorage.getItem("uiLang") || "cs";
-
-function t(key) {
-  return (UI[uiLang] && UI[uiLang][key]) || UI.cs[key] || key;
-}
-
-function applyUiLang(lang) {
-  uiLang = lang;
-  localStorage.setItem("uiLang", uiLang);
-
-  // active button styles
-  if (elUiCz && elUiEn) {
-    elUiCz.classList.toggle("active", uiLang === "cs");
-    elUiEn.classList.toggle("active", uiLang === "en");
-  }
-
-  // set <html lang="">
-  document.documentElement.lang = uiLang === "cs" ? "cs" : "en";
-
-  // translate all [data-i18n]
-  const dict = UI[uiLang] || UI.cs;
-  document.querySelectorAll("[data-i18n]").forEach((node) => {
-    const key = node.getAttribute("data-i18n");
-    if (!key) return;
-    if (dict[key] == null) return;
-    node.textContent = dict[key];
-  });
-
-  // keep screen/status in sync if still default/ready text
-  const defaultCs = UI.cs.screen_default;
-  const defaultEn = UI.en.screen_default;
-  if (elScreen && (elScreen.textContent === defaultCs || elScreen.textContent === defaultEn)) {
-    elScreen.textContent = t("screen_default");
-  }
-
-  const readyCs = UI.cs.status_ready;
-  const readyEn = UI.en.status_ready;
-  if (elStatus && (elStatus.textContent === readyCs || elStatus.textContent === readyEn)) {
-    elStatus.textContent = t("status_ready");
-  }
-}
-
-// --- Speech logic ---
+// ============================
+// Content (phrases)
+// ============================
 let synthesizer = null;
 
 const LANGS = [
@@ -107,7 +71,6 @@ const LANGS = [
   { code: "es-ES", label: "Español (ES)" },
   { code: "pt-PT", label: "Português (PT)" },
   { code: "hi-IN", label: "हिन्दी (HI)" },
-
   { code: "zh-CN", label: "中文 (简体) (ZH-CN)" },
   { code: "zh-TW", label: "中文 (繁體) (ZH-TW)" },
   { code: "ja-JP", label: "日本語 (JA)" },
@@ -160,11 +123,26 @@ const TEXT = {
     ko: { m: "정말 잘 어울려요.", f: "정말 잘 어울려요." },
   },
   D: {
-    cs: { m: "Máte štěstí, že jdu zrovna kolem.", f: "Máte štěstí, že jdu zrovna kolem." },
-    de: { m: "Sie haben Glück, dass ich gerade vorbeikomme.", f: "Sie haben Glück, dass ich gerade vorbeikomme." },
-    en: { m: "You’re lucky I’m walking by right now.", f: "You’re lucky I’m walking by right now." },
-    es: { m: "Tienes suerte de que pase justo ahora.", f: "Tienes suerte de que pase justo ahora." },
-    pt: { m: "Você tem sorte de eu estar passando agora.", f: "Você tem sorte de eu estar passando agora." },
+    cs: {
+      m: "Máte štěstí, že jdu zrovna kolem.",
+      f: "Máte štěstí, že jdu zrovna kolem.",
+    },
+    de: {
+      m: "Sie haben Glück, dass ich gerade vorbeikomme.",
+      f: "Sie haben Glück, dass ich gerade vorbeikomme.",
+    },
+    en: {
+      m: "You’re lucky I’m walking by right now.",
+      f: "You’re lucky I’m walking by right now.",
+    },
+    es: {
+      m: "Tienes suerte de que pase justo ahora.",
+      f: "Tienes suerte de que pase justo ahora.",
+    },
+    pt: {
+      m: "Você tem sorte de eu estar passando agora.",
+      f: "Você tem sorte de eu estar passando agora.",
+    },
     hi: {
       m: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।",
       f: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।",
@@ -188,62 +166,165 @@ const TEXT = {
   },
 };
 
+// ============================
+// Helpers
+// ============================
+let uiLang = "en"; // overwritten below
+
+function t(key) {
+  return (UI[uiLang] && UI[uiLang][key]) || UI.en[key] || key;
+}
+
 function langKeyFromCode(code) {
-  if (code.startsWith("cs")) return "cs";
-  if (code.startsWith("de")) return "de";
-  if (code.startsWith("en")) return "en";
-  if (code.startsWith("es")) return "es";
-  if (code.startsWith("pt")) return "pt";
-  if (code.startsWith("hi")) return "hi";
+  if ((code || "").startsWith("cs")) return "cs";
+  if ((code || "").startsWith("de")) return "de";
+  if ((code || "").startsWith("en")) return "en";
+  if ((code || "").startsWith("es")) return "es";
+  if ((code || "").startsWith("pt")) return "pt";
+  if ((code || "").startsWith("hi")) return "hi";
   if (code === "zh-CN") return "zh-CN";
   if (code === "zh-TW") return "zh-TW";
-  if (code.startsWith("ja")) return "ja";
-  if (code.startsWith("ko")) return "ko";
+  if ((code || "").startsWith("ja")) return "ja";
+  if ((code || "").startsWith("ko")) return "ko";
   return "en";
 }
 
 function currentText() {
-  const phraseKey = elPhrase.value;
-  const gender = elGender.value;
-  const lang = langKeyFromCode(elLang.value);
-  return TEXT[phraseKey]?.[lang]?.[gender] || TEXT[phraseKey]?.en?.[gender] || "";
+  const phraseKey = elPhrase?.value;
+  const gender = elGender?.value;
+  const lang = langKeyFromCode(elLang?.value);
+  return (
+    TEXT[phraseKey]?.[lang]?.[gender] ||
+    TEXT[phraseKey]?.en?.[gender] ||
+    ""
+  );
 }
 
+// ============================
+// Auto-detection rules
+// - cs + sk => UI CZ, voice cs-CZ
+// - pl      => UI EN, voice en-US
+// - else    => UI EN, voice en-US
+// Preference order:
+// 1) localStorage
+// 2) navigator language
+// ============================
+function getNavigatorPrimaryLang() {
+  const langs =
+    (navigator.languages && navigator.languages.length && navigator.languages) ||
+    [navigator.language || "en"];
+  const first = (langs[0] || "en").toLowerCase();
+  return first.split("-")[0]; // "cs", "sk", "pl" ...
+}
+
+function detectDefaultUiLang() {
+  const stored = localStorage.getItem("uiLang");
+  if (stored === "cs" || stored === "en") return stored;
+
+  const primary = getNavigatorPrimaryLang();
+  if (primary === "cs" || primary === "sk") return "cs";
+  if (primary === "pl") return "en";
+  return "en";
+}
+
+function detectDefaultVoiceLang() {
+  const stored = localStorage.getItem("voiceLang");
+  if (stored) return stored;
+
+  const primary = getNavigatorPrimaryLang();
+  const pick =
+    primary === "cs" || primary === "sk"
+      ? "cs-CZ"
+      : "en-US";
+
+  localStorage.setItem("voiceLang", pick);
+  return pick;
+}
+
+// ============================
+// UI language apply (CZ/EN only)
+// ============================
+function applyUiLang(lang) {
+  uiLang = lang === "cs" ? "cs" : "en";
+  localStorage.setItem("uiLang", uiLang);
+
+  if (elUiCs) elUiCs.classList.toggle("active", uiLang === "cs");
+  if (elUiEn) elUiEn.classList.toggle("active", uiLang === "en");
+
+  document.documentElement.lang = uiLang;
+
+  const dict = UI[uiLang] || UI.en;
+
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const key = node.getAttribute("data-i18n");
+    if (!key) return;
+    if (dict[key] == null) return;
+    node.textContent = dict[key];
+  });
+
+  // keep defaults aligned
+  const defaults = new Set([UI.cs.screen_default, UI.en.screen_default]);
+  if (elScreen && defaults.has(elScreen.textContent)) {
+    elScreen.textContent = dict.screen_default;
+  }
+
+  const readySet = new Set([UI.cs.status_ready, UI.en.status_ready]);
+  if (elStatus && readySet.has(elStatus.textContent)) {
+    elStatus.textContent = dict.status_ready;
+  }
+}
+
+// ============================
+// Fill selects
+// ============================
 function fillSelects() {
-  // languages
+  if (!elLang || !elPhrase) return;
+
   elLang.innerHTML = "";
+  elPhrase.innerHTML = "";
+
   for (const l of LANGS) {
     const opt = document.createElement("option");
     opt.value = l.code;
     opt.textContent = l.label;
     elLang.appendChild(opt);
   }
-  elLang.value = "cs-CZ";
 
-  // phrases
-  elPhrase.innerHTML = "";
+  // ✅ auto-pick voice language
+  elLang.value = detectDefaultVoiceLang();
+
   for (const p of PHRASES) {
     const opt = document.createElement("option");
     opt.value = p.key;
     opt.textContent = p.label;
     elPhrase.appendChild(opt);
   }
-  elPhrase.value = "A";
 
+  elPhrase.value = "A";
   updateScreen();
 }
 
 function updateScreen() {
-  elScreen.textContent = currentText();
+  if (elScreen) elScreen.textContent = currentText();
 }
 
+function persistVoiceLang() {
+  try {
+    localStorage.setItem("voiceLang", elLang.value);
+  } catch {}
+}
+
+// ============================
+// Azure Speech SDK
+// ============================
 async function loadSpeechSDK() {
   if (window.SpeechSDK) return window.SpeechSDK;
+
   return new Promise((resolve, reject) => {
     const s = document.createElement("script");
     s.src = "https://aka.ms/csspeech/jsbrowserpackageraw";
     s.onload = () => resolve(window.SpeechSDK);
-    s.onerror = () => reject(new Error(t("err_sdk_load")));
+    s.onerror = () => reject(new Error("Failed to load Azure Speech SDK."));
     document.head.appendChild(s);
   });
 }
@@ -265,16 +346,22 @@ function chooseVoice(langCode, gender) {
     "zh-CN": { m: "zh-CN-YunxiNeural", f: "zh-CN-XiaoxiaoNeural" },
     "zh-TW": { m: "zh-TW-YunJheNeural", f: "zh-TW-HsiaoChenNeural" },
     "ja-JP": { m: "ja-JP-KeitaNeural", f: "ja-JP-NanamiNeural" },
+    // ✅ oprava: ko-KR měl chybně mužský hlas i pro f
     "ko-KR": { m: "ko-KR-InJoonNeural", f: "ko-KR-SunHiNeural" },
   };
+
   const pick = map[langCode] || map["en-US"];
   return gender === "f" ? pick.f : pick.m;
 }
 
+// ============================
+// Playback controls
+// ============================
 async function stopPlayback() {
-  elStop.disabled = true;
-  elPlay.disabled = false;
-  elStatus.textContent = t("status_stopped");
+  if (elStop) elStop.disabled = true;
+  if (elPlay) elPlay.disabled = false;
+  if (elStatus) elStatus.textContent = t("status_stopped");
+
   try {
     if (synthesizer) {
       synthesizer.close();
@@ -284,12 +371,14 @@ async function stopPlayback() {
 }
 
 async function play() {
+  if (!elPlay || !elStop) return;
+
   elPlay.disabled = true;
   elStop.disabled = false;
 
   const text = currentText();
   updateScreen();
-  elStatus.textContent = t("status_generating");
+  if (elStatus) elStatus.textContent = t("status_generating");
 
   const SpeechSDK = await loadSpeechSDK();
   const { token, region } = await getToken();
@@ -305,9 +394,9 @@ async function play() {
       text,
       (result) => {
         if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-          elStatus.textContent = t("status_done");
+          if (elStatus) elStatus.textContent = t("status_done");
         } else {
-          elStatus.textContent = t("status_synth_error");
+          if (elStatus) elStatus.textContent = t("status_synth_error");
           console.error(result.errorDetails);
         }
         stopPlayback();
@@ -315,7 +404,7 @@ async function play() {
       },
       (err) => {
         console.error(err);
-        elStatus.textContent = t("status_error_prefix") + (err?.message || String(err));
+        if (elStatus) elStatus.textContent = t("status_error_prefix") + (err?.message || String(err));
         stopPlayback();
         resolve();
       }
@@ -323,17 +412,31 @@ async function play() {
   });
 }
 
-// listeners
-elLang.addEventListener("change", updateScreen);
-elGender.addEventListener("change", updateScreen);
-elPhrase.addEventListener("change", updateScreen);
-elPlay.addEventListener("click", play);
-elStop.addEventListener("click", stopPlayback);
+// ============================
+// Events
+// ============================
+if (elLang) {
+  elLang.addEventListener("change", () => {
+    persistVoiceLang();
+    updateScreen();
+  });
+}
+if (elGender) elGender.addEventListener("change", updateScreen);
+if (elPhrase) elPhrase.addEventListener("change", updateScreen);
+if (elPlay) elPlay.addEventListener("click", play);
+if (elStop) elStop.addEventListener("click", stopPlayback);
 
-// init
-fillSelects();
-
-// --- init UI language switch ---
-if (elUiCz) elUiCz.addEventListener("click", () => applyUiLang("cs"));
+if (elUiCs) elUiCs.addEventListener("click", () => applyUiLang("cs"));
 if (elUiEn) elUiEn.addEventListener("click", () => applyUiLang("en"));
+
+// ============================
+// Init
+// ============================
+uiLang = detectDefaultUiLang();
+fillSelects();
 applyUiLang(uiLang);
+
+// keep status aligned if empty
+if (elStatus && !elStatus.textContent) {
+  elStatus.textContent = t("status_ready");
+}
