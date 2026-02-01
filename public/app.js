@@ -18,7 +18,7 @@ const elUiEn = document.getElementById("uiEn");
 // ============================
 const UI = {
   cs: {
-    hero_title: "Voiceover hlášky",
+    hero_title: "Povzbuď se, nikdo jiný to za tebe neudělá",
     hero_sub:
       "Vyber jazyk → hlášku → rod → přehraj AI voiceover. Text se zobrazí i během přehrávání.",
     label_language: "Jazyk",
@@ -38,7 +38,7 @@ const UI = {
     status_stopped: "Zastaveno.",
   },
   en: {
-    hero_title: "Phrase voiceover",
+    hero_title: "Cheer yourself up — nobody else will do it for you",
     hero_sub:
       "Choose language → phrase → gender → play AI voiceover. The text is shown during playback.",
     label_language: "Language",
