@@ -273,3 +273,28 @@ select:focus {
     transition: none !important;
   }
 }
+/* Footer links */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer .links a {
+  color: rgba(255,255,255,.72);
+  text-decoration: none;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.footer .links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
