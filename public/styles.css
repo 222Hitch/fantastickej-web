@@ -499,4 +499,19 @@ select:focus {
   .cookie-actions .btn {
     width: 100%;
   }
+}/* Share/copy action buttons */
+.actions {
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Better icon/favicon related polish */
+::selection {
+  background: rgba(86, 180, 255, 0.35);
 }

@@ -8,6 +8,9 @@ const elPlay = document.getElementById("play");
 const elStop = document.getElementById("stop");
 const elScreen = document.getElementById("screenText");
 const elStatus = document.getElementById("status");
+const elRandom = document.getElementById("random");
+const elCopy = document.getElementById("copy");
+const elShare = document.getElementById("share");
 
 // UI language switch (ONLY CZ / EN)
 const elUiCs = document.getElementById("uiCs");
@@ -36,6 +39,11 @@ const UI = {
     status_synth_error: "Chyba při syntéze.",
     status_error_prefix: "Chyba: ",
     status_stopped: "Zastaveno.",
+    btn_random: "🎲 Překvap mě",
+btn_copy: "📋 Kopírovat",
+btn_share: "🔗 Sdílet",
+status_copied: "Zkopírováno.",
+status_shared: "Připraveno ke sdílení.",
   },
   en: {
     hero_title: "Cheer yourself up — nobody else will do it for you",
@@ -56,6 +64,11 @@ const UI = {
     status_synth_error: "Synthesis error.",
     status_error_prefix: "Error: ",
     status_stopped: "Stopped.",
+    btn_random: "🎲 Surprise me",
+btn_copy: "📋 Copy",
+btn_share: "🔗 Share",
+status_copied: "Copied.",
+status_shared: "Ready to share.",
   },
 };
 
@@ -411,7 +424,50 @@ async function play() {
     );
   });
 }
+function randomPhrase() {
+  if (!elPhrase || !PHRASES.length) return;
 
+  const current = elPhrase.value;
+  const options = PHRASES.map((p) => p.key).filter((key) => key !== current);
+  const pool = options.length ? options : PHRASES.map((p) => p.key);
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+
+  elPhrase.value = pick;
+  updateScreen();
+}
+
+async function copyPhrase() {
+  const text = currentText();
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    if (elStatus) elStatus.textContent = t("status_copied");
+  } catch {
+    if (elStatus) elStatus.textContent = text;
+  }
+}
+
+async function sharePhrase() {
+  const text = currentText();
+  const shareData = {
+    title: "Fantastickej.cz",
+    text: text,
+    url: "https://fantastickej.cz/"
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      if (elStatus) elStatus.textContent = t("status_shared");
+    } else {
+      await navigator.clipboard.writeText(`${text} https://fantastickej.cz/`);
+      if (elStatus) elStatus.textContent = t("status_copied");
+    }
+  } catch {
+    // uživatel mohl sdílení zavřít, není to chyba
+  }
+}
 // ============================
 // Events
 // ============================
@@ -428,6 +484,9 @@ if (elStop) elStop.addEventListener("click", stopPlayback);
 
 if (elUiCs) elUiCs.addEventListener("click", () => applyUiLang("cs"));
 if (elUiEn) elUiEn.addEventListener("click", () => applyUiLang("en"));
+if (elRandom) elRandom.addEventListener("click", randomPhrase);
+if (elCopy) elCopy.addEventListener("click", copyPhrase);
+if (elShare) elShare.addEventListener("click", sharePhrase);
 
 // ============================
 // Init
