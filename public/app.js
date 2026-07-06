@@ -12,18 +12,16 @@ const elRandom = document.getElementById("random");
 const elCopy = document.getElementById("copy");
 const elShare = document.getElementById("share");
 
-// UI language switch (ONLY CZ / EN)
 const elUiCs = document.getElementById("uiCs");
 const elUiEn = document.getElementById("uiEn");
 
 // ============================
-// UI dictionaries (CZ/EN only)
+// UI dictionaries CZ / EN
 // ============================
 const UI = {
   cs: {
     hero_title: "Povzbuď se, nikdo jiný to za tebe neudělá",
-    hero_sub:
-      "Vyber jazyk → hlášku → rod → přehraj AI voiceover. Text se zobrazí i během přehrávání.",
+    hero_sub: "Vyber jazyk → hlášku → rod → přehraj AI voiceover. Text se zobrazí i během přehrávání.",
     label_language: "Jazyk",
     label_gender: "Rod",
     label_phrase: "Hláška",
@@ -31,6 +29,9 @@ const UI = {
     gender_f: "Ženský",
     btn_play: "▶ Přehrát",
     btn_stop: "■ Stop",
+    btn_random: "🎲 Překvap mě",
+    btn_copy: "📋 Kopírovat",
+    btn_share: "🔗 Sdílet",
     screen_label: "Zobrazený text",
     screen_default: "Vyber nastavení a stiskni Přehrát.",
     status_ready: "Připraveno.",
@@ -39,16 +40,53 @@ const UI = {
     status_synth_error: "Chyba při syntéze.",
     status_error_prefix: "Chyba: ",
     status_stopped: "Zastaveno.",
-    btn_random: "🎲 Překvap mě",
-btn_copy: "📋 Kopírovat",
-btn_share: "🔗 Sdílet",
-status_copied: "Zkopírováno.",
-status_shared: "Připraveno ke sdílení.",
+    status_copied: "Zkopírováno.",
+    status_shared: "Připraveno ke sdílení.",
+
+    about_title: "⭐ O projektu Fantastickej.cz",
+    about_text1: "Fantastickej.cz je jednoduchý web pro rychlé povzbuzení pomocí krátkých AI voiceover hlášek. Vybereš jazyk, hlášku a mužský nebo ženský hlas. Web následně text přehraje a zároveň jej zobrazí na obrazovce.",
+    about_text2: "Cílem projektu je nabídnout lehkou, pozitivní a snadno použitelnou službu, která může zlepšit náladu, pobavit nebo dodat odvahu během běžného dne.",
+
+    how_title: "🎤 Jak funguje AI voiceover",
+    how_1_title: "1. Vybereš jazyk",
+    how_1_text: "Zvolíš jazyk, ve kterém se má hláška zobrazit a přehrát.",
+    how_2_title: "2. Vybereš hlášku",
+    how_2_text: "Vybereš krátkou motivační větu, kterou si chceš pustit.",
+    how_3_title: "3. Spustíš hlas",
+    how_3_text: "AI voiceover přehraje text přirozeným hlasem přímo v prohlížeči.",
+
+    stat_languages: "jazyků",
+    stat_voices: "AI hlasů",
+    stat_phrases: "základních hlášek",
+    stat_free: "zdarma",
+
+    languages_title: "🌍 Podporované jazyky",
+    languages_text: "Web podporuje češtinu, angličtinu, němčinu, španělštinu, portugalštinu, hindštinu, čínštinu, japonštinu a korejštinu. Díky tomu můžeš krátké povzbuzení přehrát lidem v různých částech světa.",
+
+    popular_title: "💬 Nejoblíbenější hlášky",
+    popular_1: "Jseš fantastickej.",
+    popular_2: "To dáš.",
+    popular_3: "Sluší ti to.",
+    popular_4: "Máte štěstí, že jdu zrovna kolem.",
+    popular_5: "Všechno bude.",
+
+    faq_title: "❓ Často kladené otázky",
+    faq_1_q: "Je Fantastickej.cz zdarma?",
+    faq_1_a: "Ano, základní používání webu je zdarma.",
+    faq_2_q: "Musím se registrovat?",
+    faq_2_a: "Ne. Web nevyžaduje registraci ani vytvoření účtu.",
+    faq_3_q: "Funguje web na mobilu?",
+    faq_3_a: "Ano. Stránka je responzivní a funguje na telefonu, tabletu i počítači.",
+    faq_4_q: "Ukládá web moje osobní data?",
+    faq_4_a: "Ne. Web nevyžaduje osobní údaje ani přihlášení.",
+
+    sharejoy_title: "❤️ Sdílej radost",
+    sharejoy_text: "Pokud se ti Fantastickej.cz líbí, pošli odkaz kamarádům, kolegům nebo rodině. Někdy opravdu stačí jedna krátká věta, která člověku zlepší den.",
   },
+
   en: {
     hero_title: "Cheer yourself up — nobody else will do it for you",
-    hero_sub:
-      "Choose language → phrase → gender → play AI voiceover. The text is shown during playback.",
+    hero_sub: "Choose language → phrase → gender → play AI voiceover. The text is shown during playback.",
     label_language: "Language",
     label_gender: "Gender",
     label_phrase: "Phrase",
@@ -56,6 +94,9 @@ status_shared: "Připraveno ke sdílení.",
     gender_f: "Female",
     btn_play: "▶ Play",
     btn_stop: "■ Stop",
+    btn_random: "🎲 Surprise me",
+    btn_copy: "📋 Copy",
+    btn_share: "🔗 Share",
     screen_label: "Displayed text",
     screen_default: "Choose options and press Play.",
     status_ready: "Ready.",
@@ -64,16 +105,53 @@ status_shared: "Připraveno ke sdílení.",
     status_synth_error: "Synthesis error.",
     status_error_prefix: "Error: ",
     status_stopped: "Stopped.",
-    btn_random: "🎲 Surprise me",
-btn_copy: "📋 Copy",
-btn_share: "🔗 Share",
-status_copied: "Copied.",
-status_shared: "Ready to share.",
+    status_copied: "Copied.",
+    status_shared: "Ready to share.",
+
+    about_title: "⭐ About Fantastickej.cz",
+    about_text1: "Fantastickej.cz is a simple website designed to brighten your day with short AI voiceover messages. Choose a language, a phrase and a male or female voice. The website will read the text aloud and display it on the screen.",
+    about_text2: "The goal of the project is to offer a light, positive and easy-to-use tool that can improve your mood, make someone smile or give you a little courage during an ordinary day.",
+
+    how_title: "🎤 How AI voiceover works",
+    how_1_title: "1. Choose a language",
+    how_1_text: "Select the language in which the phrase should be displayed and played.",
+    how_2_title: "2. Choose a phrase",
+    how_2_text: "Pick a short motivational sentence you want to hear.",
+    how_3_title: "3. Press Play",
+    how_3_text: "AI voiceover reads the text aloud in a natural voice directly in your browser.",
+
+    stat_languages: "languages",
+    stat_voices: "AI voices",
+    stat_phrases: "basic phrases",
+    stat_free: "free",
+
+    languages_title: "🌍 Supported languages",
+    languages_text: "The website supports Czech, English, German, Spanish, Portuguese, Hindi, Chinese, Japanese and Korean. This makes it possible to play a short encouraging phrase for people in different parts of the world.",
+
+    popular_title: "💬 Popular phrases",
+    popular_1: "You are fantastic.",
+    popular_2: "You can do it.",
+    popular_3: "That suits you.",
+    popular_4: "You’re lucky I’m walking by right now.",
+    popular_5: "Everything will be okay.",
+
+    faq_title: "❓ Frequently Asked Questions",
+    faq_1_q: "Is Fantastickej.cz free?",
+    faq_1_a: "Yes, the basic use of the website is free.",
+    faq_2_q: "Do I need to register?",
+    faq_2_a: "No. The website does not require registration or user accounts.",
+    faq_3_q: "Does it work on mobile?",
+    faq_3_a: "Yes. The website is responsive and works on phones, tablets and computers.",
+    faq_4_q: "Does the website store my personal data?",
+    faq_4_a: "No. The website does not require personal data or login.",
+
+    sharejoy_title: "❤️ Share the positivity",
+    sharejoy_text: "If you like Fantastickej.cz, send the link to your friends, colleagues or family. Sometimes one short sentence is enough to make someone’s day better.",
   },
 };
 
 // ============================
-// Content (phrases)
+// Content
 // ============================
 let synthesizer = null;
 
@@ -136,30 +214,12 @@ const TEXT = {
     ko: { m: "정말 잘 어울려요.", f: "정말 잘 어울려요." },
   },
   D: {
-    cs: {
-      m: "Máte štěstí, že jdu zrovna kolem.",
-      f: "Máte štěstí, že jdu zrovna kolem.",
-    },
-    de: {
-      m: "Sie haben Glück, dass ich gerade vorbeikomme.",
-      f: "Sie haben Glück, dass ich gerade vorbeikomme.",
-    },
-    en: {
-      m: "You’re lucky I’m walking by right now.",
-      f: "You’re lucky I’m walking by right now.",
-    },
-    es: {
-      m: "Tienes suerte de que pase justo ahora.",
-      f: "Tienes suerte de que pase justo ahora.",
-    },
-    pt: {
-      m: "Você tem sorte de eu estar passando agora.",
-      f: "Você tem sorte de eu estar passando agora.",
-    },
-    hi: {
-      m: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।",
-      f: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।",
-    },
+    cs: { m: "Máte štěstí, že jdu zrovna kolem.", f: "Máte štěstí, že jdu zrovna kolem." },
+    de: { m: "Sie haben Glück, dass ich gerade vorbeikomme.", f: "Sie haben Glück, dass ich gerade vorbeikomme." },
+    en: { m: "You’re lucky I’m walking by right now.", f: "You’re lucky I’m walking by right now." },
+    es: { m: "Tienes suerte de que pase justo ahora.", f: "Tienes suerte de que pase justo ahora." },
+    pt: { m: "Você tem sorte de eu estar passando agora.", f: "Você tem sorte de eu estar passando agora." },
+    hi: { m: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।", f: "आप खुशकिस्मत हैं कि मैं अभी यहीं से गुजर रहा/रही हूँ।" },
     "zh-CN": { m: "你真走运，我正好路过。", f: "你真走运，我正好路过。" },
     "zh-TW": { m: "你真走運，我正好路過。", f: "你真走運，我正好路過。" },
     ja: { m: "ちょうど通りかかった私に感謝して。", f: "ちょうど通りかかった私に感謝して。" },
@@ -182,7 +242,7 @@ const TEXT = {
 // ============================
 // Helpers
 // ============================
-let uiLang = "en"; // overwritten below
+let uiLang = "en";
 
 function t(key) {
   return (UI[uiLang] && UI[uiLang][key]) || UI.en[key] || key;
@@ -206,28 +266,15 @@ function currentText() {
   const phraseKey = elPhrase?.value;
   const gender = elGender?.value;
   const lang = langKeyFromCode(elLang?.value);
-  return (
-    TEXT[phraseKey]?.[lang]?.[gender] ||
-    TEXT[phraseKey]?.en?.[gender] ||
-    ""
-  );
+
+  return TEXT[phraseKey]?.[lang]?.[gender] || TEXT[phraseKey]?.en?.[gender] || "";
 }
 
-// ============================
-// Auto-detection rules
-// - cs + sk => UI CZ, voice cs-CZ
-// - pl      => UI EN, voice en-US
-// - else    => UI EN, voice en-US
-// Preference order:
-// 1) localStorage
-// 2) navigator language
-// ============================
 function getNavigatorPrimaryLang() {
   const langs =
     (navigator.languages && navigator.languages.length && navigator.languages) ||
     [navigator.language || "en"];
-  const first = (langs[0] || "en").toLowerCase();
-  return first.split("-")[0]; // "cs", "sk", "pl" ...
+  return (langs[0] || "en").toLowerCase().split("-")[0];
 }
 
 function detectDefaultUiLang() {
@@ -236,7 +283,6 @@ function detectDefaultUiLang() {
 
   const primary = getNavigatorPrimaryLang();
   if (primary === "cs" || primary === "sk") return "cs";
-  if (primary === "pl") return "en";
   return "en";
 }
 
@@ -245,18 +291,12 @@ function detectDefaultVoiceLang() {
   if (stored) return stored;
 
   const primary = getNavigatorPrimaryLang();
-  const pick =
-    primary === "cs" || primary === "sk"
-      ? "cs-CZ"
-      : "en-US";
+  const pick = primary === "cs" || primary === "sk" ? "cs-CZ" : "en-US";
 
   localStorage.setItem("voiceLang", pick);
   return pick;
 }
 
-// ============================
-// UI language apply (CZ/EN only)
-// ============================
 function applyUiLang(lang) {
   uiLang = lang === "cs" ? "cs" : "en";
   localStorage.setItem("uiLang", uiLang);
@@ -270,26 +310,33 @@ function applyUiLang(lang) {
 
   document.querySelectorAll("[data-i18n]").forEach((node) => {
     const key = node.getAttribute("data-i18n");
-    if (!key) return;
-    if (dict[key] == null) return;
+    if (!key || dict[key] == null) return;
     node.textContent = dict[key];
   });
 
-  // keep defaults aligned
-  const defaults = new Set([UI.cs.screen_default, UI.en.screen_default]);
-  if (elScreen && defaults.has(elScreen.textContent)) {
-    elScreen.textContent = dict.screen_default;
-  }
+  updateScreen();
 
-  const readySet = new Set([UI.cs.status_ready, UI.en.status_ready]);
-  if (elStatus && readySet.has(elStatus.textContent)) {
-    elStatus.textContent = dict.status_ready;
+  if (elStatus) {
+    const current = elStatus.textContent.trim();
+    const knownStatuses = new Set([
+      UI.cs.status_ready,
+      UI.en.status_ready,
+      UI.cs.status_stopped,
+      UI.en.status_stopped,
+      UI.cs.status_done,
+      UI.en.status_done,
+      UI.cs.status_copied,
+      UI.en.status_copied,
+      UI.cs.status_shared,
+      UI.en.status_shared,
+    ]);
+
+    if (!current || knownStatuses.has(current)) {
+      elStatus.textContent = t("status_ready");
+    }
   }
 }
 
-// ============================
-// Fill selects
-// ============================
 function fillSelects() {
   if (!elLang || !elPhrase) return;
 
@@ -303,7 +350,6 @@ function fillSelects() {
     elLang.appendChild(opt);
   }
 
-  // ✅ auto-pick voice language
   elLang.value = detectDefaultVoiceLang();
 
   for (const p of PHRASES) {
@@ -359,7 +405,6 @@ function chooseVoice(langCode, gender) {
     "zh-CN": { m: "zh-CN-YunxiNeural", f: "zh-CN-XiaoxiaoNeural" },
     "zh-TW": { m: "zh-TW-YunJheNeural", f: "zh-TW-HsiaoChenNeural" },
     "ja-JP": { m: "ja-JP-KeitaNeural", f: "ja-JP-NanamiNeural" },
-    // ✅ oprava: ko-KR měl chybně mužský hlas i pro f
     "ko-KR": { m: "ko-KR-InJoonNeural", f: "ko-KR-SunHiNeural" },
   };
 
@@ -368,7 +413,7 @@ function chooseVoice(langCode, gender) {
 }
 
 // ============================
-// Playback controls
+// Playback
 // ============================
 async function stopPlayback() {
   if (elStop) elStop.disabled = true;
@@ -391,39 +436,47 @@ async function play() {
 
   const text = currentText();
   updateScreen();
+
   if (elStatus) elStatus.textContent = t("status_generating");
 
-  const SpeechSDK = await loadSpeechSDK();
-  const { token, region } = await getToken();
+  try {
+    const SpeechSDK = await loadSpeechSDK();
+    const { token, region } = await getToken();
 
-  const speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(token, region);
-  speechConfig.speechSynthesisVoiceName = chooseVoice(elLang.value, elGender.value);
+    const speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(token, region);
+    speechConfig.speechSynthesisVoiceName = chooseVoice(elLang.value, elGender.value);
 
-  const audioConfig = SpeechSDK.AudioConfig.fromDefaultSpeakerOutput();
-  synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
+    const audioConfig = SpeechSDK.AudioConfig.fromDefaultSpeakerOutput();
+    synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
 
-  return new Promise((resolve) => {
-    synthesizer.speakTextAsync(
-      text,
-      (result) => {
-        if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-          if (elStatus) elStatus.textContent = t("status_done");
-        } else {
-          if (elStatus) elStatus.textContent = t("status_synth_error");
-          console.error(result.errorDetails);
+    return new Promise((resolve) => {
+      synthesizer.speakTextAsync(
+        text,
+        (result) => {
+          if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+            if (elStatus) elStatus.textContent = t("status_done");
+          } else {
+            if (elStatus) elStatus.textContent = t("status_synth_error");
+            console.error(result.errorDetails);
+          }
+          stopPlayback();
+          resolve();
+        },
+        (err) => {
+          console.error(err);
+          if (elStatus) elStatus.textContent = t("status_error_prefix") + (err?.message || String(err));
+          stopPlayback();
+          resolve();
         }
-        stopPlayback();
-        resolve();
-      },
-      (err) => {
-        console.error(err);
-        if (elStatus) elStatus.textContent = t("status_error_prefix") + (err?.message || String(err));
-        stopPlayback();
-        resolve();
-      }
-    );
-  });
+      );
+    });
+  } catch (err) {
+    console.error(err);
+    if (elStatus) elStatus.textContent = t("status_error_prefix") + (err?.message || String(err));
+    stopPlayback();
+  }
 }
+
 function randomPhrase() {
   if (!elPhrase || !PHRASES.length) return;
 
@@ -452,8 +505,8 @@ async function sharePhrase() {
   const text = currentText();
   const shareData = {
     title: "Fantastickej.cz",
-    text: text,
-    url: "https://fantastickej.cz/"
+    text,
+    url: "https://fantastickej.cz/",
   };
 
   try {
@@ -464,10 +517,9 @@ async function sharePhrase() {
       await navigator.clipboard.writeText(`${text} https://fantastickej.cz/`);
       if (elStatus) elStatus.textContent = t("status_copied");
     }
-  } catch {
-    // uživatel mohl sdílení zavřít, není to chyba
-  }
+  } catch {}
 }
+
 // ============================
 // Events
 // ============================
@@ -477,6 +529,7 @@ if (elLang) {
     updateScreen();
   });
 }
+
 if (elGender) elGender.addEventListener("change", updateScreen);
 if (elPhrase) elPhrase.addEventListener("change", updateScreen);
 if (elPlay) elPlay.addEventListener("click", play);
@@ -484,6 +537,7 @@ if (elStop) elStop.addEventListener("click", stopPlayback);
 
 if (elUiCs) elUiCs.addEventListener("click", () => applyUiLang("cs"));
 if (elUiEn) elUiEn.addEventListener("click", () => applyUiLang("en"));
+
 if (elRandom) elRandom.addEventListener("click", randomPhrase);
 if (elCopy) elCopy.addEventListener("click", copyPhrase);
 if (elShare) elShare.addEventListener("click", sharePhrase);
@@ -495,7 +549,6 @@ uiLang = detectDefaultUiLang();
 fillSelects();
 applyUiLang(uiLang);
 
-// keep status aligned if empty
 if (elStatus && !elStatus.textContent) {
   elStatus.textContent = t("status_ready");
 }
