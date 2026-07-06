@@ -1,15 +1,24 @@
 <!doctype html>
 <html lang="cs">
   <head>
-<!-- Google tag (gtag.js) -->
+<!-- Google Consent Mode v2 + Google Analytics -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  gtag('consent', 'default', {
+    'analytics_storage': 'denied',
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied'
+  });
+</script>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2P0W6G7FX6"></script>
 
 <script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', 'G-2P0W6G7FX6');
+  gtag('js', new Date());
+  gtag('config', 'G-2P0W6G7FX6');
 </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -207,6 +216,27 @@ gtag('config', 'G-2P0W6G7FX6');
       </footer>
     </main>
 
-    <script src="/app.js"></script>
+    <div id="cookieBanner" class="cookie-banner" hidden>
+  <div class="cookie-text">
+    <strong>Používáme cookies</strong>
+    <p>
+      Fantastickej.cz používá cookies pro měření návštěvnosti a zlepšování webu.
+      Souhlas můžeš kdykoliv změnit vymazáním cookies v prohlížeči.
+    </p>
+  </div>
+
+  <div class="cookie-actions">
+    <button id="cookieReject" type="button" class="btn btn-secondary">
+      Odmítnout
+    </button>
+
+    <button id="cookieAccept" type="button" class="btn">
+      Přijmout
+    </button>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+<script src="/cookie.js"></script>
   </body>
 </html>
