@@ -169,27 +169,27 @@ const LANGS = [
 ];
 
 const PHRASES = [
-  { key: "A", label: "A) Jseš fantastickej / fantastická" },
-  { key: "B", label: "B) To dáš" },
-  { key: "C", label: "C) Sluší ti to" },
-  { key: "D", label: "D) Máte štěstí, že jdu zrovna kolem" },
-  { key: "E", label: "E) Všechno bude" },
+  { key: "A", cs: "Jseš fantastickej / fantastická", en: "You are fantastic" },
+  { key: "B", cs: "To dáš", en: "You can do it" },
+  { key: "C", cs: "Sluší ti to", en: "That suits you" },
+  { key: "D", cs: "Máte štěstí, že jdu zrovna kolem", en: "You’re lucky I’m walking by right now" },
+  { key: "E", cs: "Všechno bude", en: "Everything will be okay" },
 
-  { key: "F", label: "F) Není zač" },
-  { key: "G", label: "G) Ještě, že mě máte" },
-  { key: "H", label: "H) Válíš" },
-  { key: "I", label: "I) Dneska to zvládneš" },
-  { key: "J", label: "J) Dneska bude skvělý den" },
-  { key: "K", label: "K) Eh, eh, eh mně je to fuk!" },
-  { key: "L", label: "L) Jseš blíž, než si myslíš" },
-  { key: "M", label: "M) Klid, máš na to" },
-  { key: "N", label: "N) Tohle není konec příběhu" },
-  { key: "O", label: "O) Máš v sobě víc, než tušíš" },
-  { key: "P", label: "P) Teď je čas zazářit" },
-  { key: "Q", label: "Q) Úsměv ti sluší" },
-  { key: "R", label: "R) Co můžeš udělat dnes, odlož na zítřek a máš den volna" },
-  { key: "S", label: "S) Nikdy to není tvoje chyba" },
-  { key: "T", label: "T) Neprohráváš, maximálně ti došel čas věci otočit ve svůj prospěch" },
+  { key: "F", cs: "Není zač", en: "You’re welcome" },
+  { key: "G", cs: "Ještě, že mě máte", en: "Good thing you have me" },
+  { key: "H", cs: "Válíš", en: "You rock" },
+  { key: "I", cs: "Dneska to zvládneš", en: "You can handle it today" },
+  { key: "J", cs: "Dneska bude skvělý den", en: "Today is going to be a great day" },
+  { key: "K", cs: "Eh, eh, eh mně je to fuk!", en: "Eh, eh, eh, I don’t care!" },
+  { key: "L", cs: "Jseš blíž, než si myslíš", en: "You’re closer than you think" },
+  { key: "M", cs: "Klid, máš na to", en: "Stay calm, you’ve got this" },
+  { key: "N", cs: "Tohle není konec příběhu", en: "This is not the end of the story" },
+  { key: "O", cs: "Máš v sobě víc, než tušíš", en: "You have more in you than you realize" },
+  { key: "P", cs: "Teď je čas zazářit", en: "Now it’s time to shine" },
+  { key: "Q", cs: "Úsměv ti sluší", en: "A smile suits you" },
+  { key: "R", cs: "Co můžeš udělat dnes, odlož na zítřek a máš den volna", en: "Postpone today’s work until tomorrow and enjoy a day off" },
+  { key: "S", cs: "Nikdy to není tvoje chyba", en: "It is never your fault" },
+  { key: "T", cs: "Neprohráváš, maximálně ti došel čas věci otočit ve svůj prospěch", en: "You are not losing, you just ran out of time to turn things in your favor" },
 ];
 
 const TEXT = {
@@ -471,7 +471,10 @@ function langKeyFromCode(code) {
   if ((code || "").startsWith("ko")) return "ko";
   return "en";
 }
-
+function phraseLabel(phrase) {
+  const label = uiLang === "cs" ? phrase.cs : phrase.en;
+  return `${phrase.key}) ${label}`;
+}
 function currentText() {
   const phraseKey = elPhrase?.value;
   const gender = elGender?.value;
@@ -524,7 +527,8 @@ function applyUiLang(lang) {
     node.textContent = dict[key];
   });
 
-  updateScreen();
+  refreshPhraseSelect();
+updateScreen();
 
   if (elStatus) {
     const current = elStatus.textContent.trim();
@@ -546,7 +550,22 @@ function applyUiLang(lang) {
     }
   }
 }
+function refreshPhraseSelect() {
+  if (!elPhrase) return;
 
+  const selected = elPhrase.value || "A";
+
+  elPhrase.innerHTML = "";
+
+  for (const p of PHRASES) {
+    const opt = document.createElement("option");
+    opt.value = p.key;
+    opt.textContent = phraseLabel(p);
+    elPhrase.appendChild(opt);
+  }
+
+  elPhrase.value = selected;
+}
 function fillSelects() {
   if (!elLang || !elPhrase) return;
 
@@ -563,10 +582,10 @@ function fillSelects() {
   elLang.value = detectDefaultVoiceLang();
 
   for (const p of PHRASES) {
-    const opt = document.createElement("option");
-    opt.value = p.key;
-    opt.textContent = p.label;
-    elPhrase.appendChild(opt);
+  const opt = document.createElement("option");
+  opt.value = p.key;
+  opt.textContent = phraseLabel(p);
+  elPhrase.appendChild(opt);
   }
 
   elPhrase.value = "A";
