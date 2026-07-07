@@ -472,8 +472,7 @@ function langKeyFromCode(code) {
   return "en";
 }
 function phraseLabel(phrase) {
-  const label = uiLang === "cs" ? phrase.cs : phrase.en;
-  return `${phrase.key}) ${label}`;
+  return uiLang === "cs" ? phrase.cs : phrase.en;
 }
 function currentText() {
   const phraseKey = elPhrase?.value;
