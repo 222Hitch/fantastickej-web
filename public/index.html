@@ -1,67 +1,79 @@
 <!doctype html>
 <html lang="cs">
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Fantastickej.cz",
-  "url": "https://fantastickej.cz/",
-  "description": "Krátké AI voiceover hlášky pro povzbuzení ve více jazycích.",
-  "inLanguage": ["cs", "en"],
-  "publisher": {
-    "@type": "Organization",
-    "name": "Fantastickej.cz"
-  }
-}
-</script>
   <head>
-<!-- Google Consent Mode v2 + Google Analytics -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+    <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
 
-  gtag('consent', 'default', {
-    'analytics_storage': 'denied',
-    'ad_storage': 'denied',
-    'ad_user_data': 'denied',
-    'ad_personalization': 'denied'
-  });
-</script>
+      gtag("consent", "default", {
+        analytics_storage: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied"
+      });
+    </script>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2P0W6G7FX6"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2P0W6G7FX6"></script>
+    <script>
+      gtag("js", new Date());
+      gtag("config", "G-2P0W6G7FX6");
+    </script>
 
-<script>
-  gtag('js', new Date());
-  gtag('config', 'G-2P0W6G7FX6');
-</script>
+    <!-- Google AdSense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5450052687967352"
+      crossorigin="anonymous"
+    ></script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   <title>Fantastickej.cz – AI voiceover motivační hlášky ve 10 jazycích</title>
+    <title>Fantastickej.cz – AI voiceover motivační hlášky ve 10 jazycích</title>
 
-<meta
-  name="description"
-  content="Povzbuď se během několika sekund. Vyber jazyk, hlas a nech si AI přečíst motivační hlášku zdarma ve více než 10 jazycích."
-/>
+    <meta
+      name="description"
+      content="Povzbuď se během několika sekund. Vyber jazyk, hlas a nech si AI přečíst motivační hlášku zdarma ve více než 10 jazycích."
+    />
 
-<meta name="keywords" content="AI voiceover, motivační hlášky, povzbuzení, text to speech, AI hlas, pozitivní věty" />
-<link rel="canonical" href="https://fantastickej.cz/" />
+    <meta
+      name="keywords"
+      content="AI voiceover, motivační hlášky, povzbuzení, text to speech, AI hlas, pozitivní věty"
+    />
 
-<meta property="og:title" content="Fantastickej.cz – Povzbuď se AI hlasem" />
-<meta property="og:description" content="Krátké AI voiceover hlášky pro povzbuzení ve více jazycích." />
-<meta property="og:url" content="https://fantastickej.cz/" />
-<meta property="og:type" content="website" />
-<meta property="og:image" content="https://fantastickej.cz/og-image.svg" />
+    <link rel="canonical" href="https://fantastickej.cz/" />
 
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Fantastickej.cz – Povzbuď se AI hlasem" />
-<meta name="twitter:description" content="Krátké AI voiceover hlášky pro povzbuzení." />
-<meta name="twitter:image" content="https://fantastickej.cz/og-image.svg" />
+    <meta property="og:title" content="Fantastickej.cz – Povzbuď se AI hlasem" />
+    <meta property="og:description" content="Krátké AI voiceover hlášky pro povzbuzení ve více jazycích." />
+    <meta property="og:url" content="https://fantastickej.cz/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://fantastickej.cz/og-image.svg" />
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-<link rel="manifest" href="/site.webmanifest" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Fantastickej.cz – Povzbuď se AI hlasem" />
+    <meta name="twitter:description" content="Krátké AI voiceover hlášky pro povzbuzení." />
+    <meta name="twitter:image" content="https://fantastickej.cz/og-image.svg" />
 
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="stylesheet" href="/styles.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Fantastickej.cz",
+        "url": "https://fantastickej.cz/",
+        "description": "Krátké AI voiceover hlášky pro povzbuzení ve více jazycích.",
+        "inLanguage": ["cs", "en"],
+        "publisher": {
+          "@type": "Organization",
+          "name": "Fantastickej.cz"
+        }
+      }
+    </script>
   </head>
 
   <body>
@@ -102,10 +114,10 @@
 
         <div class="actions">
           <button id="play" class="btn" data-i18n="btn_play">▶ Přehrát</button>
-<button id="stop" class="btn btn-secondary" disabled data-i18n="btn_stop">■ Stop</button>
-<button id="random" class="btn btn-secondary" type="button" data-i18n="btn_random">🎲 Překvap mě</button>
-<button id="copy" class="btn btn-secondary" type="button" data-i18n="btn_copy">📋 Kopírovat</button>
-<button id="share" class="btn btn-secondary" type="button" data-i18n="btn_share">🔗 Sdílet</button>
+          <button id="stop" class="btn btn-secondary" disabled data-i18n="btn_stop">■ Stop</button>
+          <button id="random" class="btn btn-secondary" type="button" data-i18n="btn_random">🎲 Překvap mě</button>
+          <button id="copy" class="btn btn-secondary" type="button" data-i18n="btn_copy">📋 Kopírovat</button>
+          <button id="share" class="btn btn-secondary" type="button" data-i18n="btn_share">🔗 Sdílet</button>
         </div>
       </section>
 
@@ -119,114 +131,114 @@
       </section>
 
       <section class="content-section">
-  <h2 data-i18n="about_title">⭐ O projektu Fantastickej.cz</h2>
-  <p data-i18n="about_text1">
-    Fantastickej.cz je jednoduchý web pro rychlé povzbuzení pomocí krátkých AI voiceover hlášek.
-    Vybereš jazyk, hlášku a mužský nebo ženský hlas. Web následně text přehraje a zároveň jej zobrazí na obrazovce.
-  </p>
-  <p data-i18n="about_text2">
-    Cílem projektu je nabídnout lehkou, pozitivní a snadno použitelnou službu, která může zlepšit náladu,
-    pobavit nebo dodat odvahu během běžného dne.
-  </p>
-</section>
+        <h2 data-i18n="about_title">⭐ O projektu Fantastickej.cz</h2>
+        <p data-i18n="about_text1">
+          Fantastickej.cz je jednoduchý web pro rychlé povzbuzení pomocí krátkých AI voiceover hlášek.
+          Vybereš jazyk, hlášku a mužský nebo ženský hlas. Web následně text přehraje a zároveň jej zobrazí na obrazovce.
+        </p>
+        <p data-i18n="about_text2">
+          Cílem projektu je nabídnout lehkou, pozitivní a snadno použitelnou službu, která může zlepšit náladu,
+          pobavit nebo dodat odvahu během běžného dne.
+        </p>
+      </section>
 
-<section class="content-section">
-  <h2 data-i18n="how_title">🎤 Jak funguje AI voiceover</h2>
+      <section class="content-section">
+        <h2 data-i18n="how_title">🎤 Jak funguje AI voiceover</h2>
 
-  <div class="feature-grid">
-    <div class="mini-card">
-      <h3 data-i18n="how_1_title">1. Vybereš jazyk</h3>
-      <p data-i18n="how_1_text">Zvolíš jazyk, ve kterém se má hláška zobrazit a přehrát.</p>
-    </div>
+        <div class="feature-grid">
+          <div class="mini-card">
+            <h3 data-i18n="how_1_title">1. Vybereš jazyk</h3>
+            <p data-i18n="how_1_text">Zvolíš jazyk, ve kterém se má hláška zobrazit a přehrát.</p>
+          </div>
 
-    <div class="mini-card">
-      <h3 data-i18n="how_2_title">2. Vybereš hlášku</h3>
-      <p data-i18n="how_2_text">Vybereš krátkou motivační větu, kterou si chceš pustit.</p>
-    </div>
+          <div class="mini-card">
+            <h3 data-i18n="how_2_title">2. Vybereš hlášku</h3>
+            <p data-i18n="how_2_text">Vybereš krátkou motivační větu, kterou si chceš pustit.</p>
+          </div>
 
-    <div class="mini-card">
-      <h3 data-i18n="how_3_title">3. Spustíš hlas</h3>
-      <p data-i18n="how_3_text">AI voiceover přehraje text přirozeným hlasem přímo v prohlížeči.</p>
-    </div>
-  </div>
-</section>
+          <div class="mini-card">
+            <h3 data-i18n="how_3_title">3. Spustíš hlas</h3>
+            <p data-i18n="how_3_text">AI voiceover přehraje text přirozeným hlasem přímo v prohlížeči.</p>
+          </div>
+        </div>
+      </section>
 
-<section class="stats-grid">
-  <div class="stat">
-    <strong>10</strong>
-    <span data-i18n="stat_languages">jazyků</span>
-  </div>
+      <section class="stats-grid">
+        <div class="stat">
+          <strong>10</strong>
+          <span data-i18n="stat_languages">jazyků</span>
+        </div>
 
-  <div class="stat">
-    <strong>20+</strong>
-    <span data-i18n="stat_voices">AI hlasů</span>
-  </div>
+        <div class="stat">
+          <strong>20+</strong>
+          <span data-i18n="stat_voices">AI hlasů</span>
+        </div>
 
-  <div class="stat">
-    <strong>20</strong>
-    <span data-i18n="stat_phrases">základních hlášek</span>
-  </div>
+        <div class="stat">
+          <strong>20</strong>
+          <span data-i18n="stat_phrases">základních hlášek</span>
+        </div>
 
-  <div class="stat">
-    <strong>100 %</strong>
-    <span data-i18n="stat_free">zdarma</span>
-  </div>
-</section>
+        <div class="stat">
+          <strong>100 %</strong>
+          <span data-i18n="stat_free">zdarma</span>
+        </div>
+      </section>
 
-<section class="content-section">
-  <h2 data-i18n="languages_title">🌍 Podporované jazyky</h2>
-  <p data-i18n="languages_text">
-    Web podporuje češtinu, angličtinu, němčinu, španělštinu, portugalštinu, hindštinu,
-    čínštinu, japonštinu a korejštinu. Díky tomu můžeš krátké povzbuzení přehrát lidem
-    v různých částech světa.
-  </p>
-</section>
+      <section class="content-section">
+        <h2 data-i18n="languages_title">🌍 Podporované jazyky</h2>
+        <p data-i18n="languages_text">
+          Web podporuje češtinu, angličtinu, němčinu, španělštinu, portugalštinu, hindštinu,
+          čínštinu, japonštinu a korejštinu. Díky tomu můžeš krátké povzbuzení přehrát lidem
+          v různých částech světa.
+        </p>
+      </section>
 
-<section class="content-section">
-  <h2 data-i18n="popular_title">💬 Nejoblíbenější hlášky</h2>
+      <section class="content-section">
+        <h2 data-i18n="popular_title">💬 Nejoblíbenější hlášky</h2>
 
-  <div class="phrase-grid">
-    <div class="phrase-card" data-i18n="popular_1">Jseš fantastickej.</div>
-    <div class="phrase-card" data-i18n="popular_2">To dáš.</div>
-    <div class="phrase-card" data-i18n="popular_3">Sluší ti to.</div>
-    <div class="phrase-card" data-i18n="popular_4">Máte štěstí, že jdu zrovna kolem.</div>
-    <div class="phrase-card" data-i18n="popular_5">Všechno bude.</div>
-  </div>
-</section>
+        <div class="phrase-grid">
+          <div class="phrase-card" data-i18n="popular_1">Jseš fantastickej.</div>
+          <div class="phrase-card" data-i18n="popular_2">To dáš.</div>
+          <div class="phrase-card" data-i18n="popular_3">Sluší ti to.</div>
+          <div class="phrase-card" data-i18n="popular_4">Máte štěstí, že jdu zrovna kolem.</div>
+          <div class="phrase-card" data-i18n="popular_5">Všechno bude.</div>
+        </div>
+      </section>
 
-<section class="content-section">
-  <h2 data-i18n="faq_title">❓ Často kladené otázky</h2>
+      <section class="content-section">
+        <h2 data-i18n="faq_title">❓ Často kladené otázky</h2>
 
-  <div class="faq-grid">
-    <div class="mini-card">
-      <h3 data-i18n="faq_1_q">Je Fantastickej.cz zdarma?</h3>
-      <p data-i18n="faq_1_a">Ano, základní používání webu je zdarma.</p>
-    </div>
+        <div class="faq-grid">
+          <div class="mini-card">
+            <h3 data-i18n="faq_1_q">Je Fantastickej.cz zdarma?</h3>
+            <p data-i18n="faq_1_a">Ano, základní používání webu je zdarma.</p>
+          </div>
 
-    <div class="mini-card">
-      <h3 data-i18n="faq_2_q">Musím se registrovat?</h3>
-      <p data-i18n="faq_2_a">Ne. Web nevyžaduje registraci ani vytvoření účtu.</p>
-    </div>
+          <div class="mini-card">
+            <h3 data-i18n="faq_2_q">Musím se registrovat?</h3>
+            <p data-i18n="faq_2_a">Ne. Web nevyžaduje registraci ani vytvoření účtu.</p>
+          </div>
 
-    <div class="mini-card">
-      <h3 data-i18n="faq_3_q">Funguje web na mobilu?</h3>
-      <p data-i18n="faq_3_a">Ano. Stránka je responzivní a funguje na telefonu, tabletu i počítači.</p>
-    </div>
+          <div class="mini-card">
+            <h3 data-i18n="faq_3_q">Funguje web na mobilu?</h3>
+            <p data-i18n="faq_3_a">Ano. Stránka je responzivní a funguje na telefonu, tabletu i počítači.</p>
+          </div>
 
-    <div class="mini-card">
-      <h3 data-i18n="faq_4_q">Ukládá web moje osobní data?</h3>
-      <p data-i18n="faq_4_a">Ne. Web nevyžaduje osobní údaje ani přihlášení.</p>
-    </div>
-  </div>
-</section>
+          <div class="mini-card">
+            <h3 data-i18n="faq_4_q">Ukládá web moje osobní data?</h3>
+            <p data-i18n="faq_4_a">Ne. Web nevyžaduje osobní údaje ani přihlášení.</p>
+          </div>
+        </div>
+      </section>
 
-<section class="content-section">
-  <h2 data-i18n="sharejoy_title">❤️ Sdílej radost</h2>
-  <p data-i18n="sharejoy_text">
-    Pokud se ti Fantastickej.cz líbí, pošli odkaz kamarádům, kolegům nebo rodině.
-    Někdy opravdu stačí jedna krátká věta, která člověku zlepší den.
-  </p>
-</section>
+      <section class="content-section">
+        <h2 data-i18n="sharejoy_title">❤️ Sdílej radost</h2>
+        <p data-i18n="sharejoy_text">
+          Pokud se ti Fantastickej.cz líbí, pošli odkaz kamarádům, kolegům nebo rodině.
+          Někdy opravdu stačí jedna krátká věta, která člověku zlepší den.
+        </p>
+      </section>
 
       <footer class="footer">
         <span id="status" data-i18n="status_ready">Připraveno.</span>
@@ -237,33 +249,26 @@
           <a href="/contact.html">Kontakt</a>
         </div>
 
-        <div class="copyright">
-          © 2026 Fantastickej.cz
-        </div>
+        <div class="copyright">© 2026 Fantastickej.cz</div>
       </footer>
     </main>
 
     <div id="cookieBanner" class="cookie-banner" hidden>
-  <div class="cookie-text">
-    <strong>Používáme cookies</strong>
-    <p>
-      Fantastickej.cz používá cookies pro měření návštěvnosti a zlepšování webu.
-      Souhlas můžeš kdykoliv změnit vymazáním cookies v prohlížeči.
-    </p>
-  </div>
+      <div class="cookie-text">
+        <strong>Používáme cookies</strong>
+        <p>
+          Fantastickej.cz používá cookies pro měření návštěvnosti a zlepšování webu.
+          Souhlas můžeš kdykoliv změnit vymazáním cookies v prohlížeči.
+        </p>
+      </div>
 
-  <div class="cookie-actions">
-    <button id="cookieReject" type="button" class="btn btn-secondary">
-      Odmítnout
-    </button>
+      <div class="cookie-actions">
+        <button id="cookieReject" type="button" class="btn btn-secondary">Odmítnout</button>
+        <button id="cookieAccept" type="button" class="btn">Přijmout</button>
+      </div>
+    </div>
 
-    <button id="cookieAccept" type="button" class="btn">
-      Přijmout
-    </button>
-  </div>
-</div>
-
-<script src="/app.js"></script>
-<script src="/cookie.js"></script>
+    <script src="/app.js"></script>
+    <script src="/cookie.js"></script>
   </body>
 </html>
