@@ -13,7 +13,27 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 const PORT = process.env.PORT || 3000;
-const BLOG_DIR = path.join(__dirname, "..", "content", "blog");
+const BLOG_DIRS = {
+  cs: path.join(__dirname, "..", "content", "blog"),
+  en: path.join(__dirname, "..", "content", "blog-en"),
+};
+
+const BLOG_SLUG_MAP = {
+  cs: {
+    "nejlepsi-motivacni-hlasky": "best-motivational-phrases",
+    "jak-zlepsit-naladu-rychle": "lift-your-mood-fast",
+    "ranni-rutina-pozitivni-energie": "five-minute-morning-routine",
+    "motivacni-hlasky-do-prace": "motivational-work-phrases",
+    "proc-pozitivni-vety-pomahaji-stres": "why-positive-phrases-help-stress",
+  },
+  en: {
+    "best-motivational-phrases": "nejlepsi-motivacni-hlasky",
+    "lift-your-mood-fast": "jak-zlepsit-naladu-rychle",
+    "five-minute-morning-routine": "ranni-rutina-pozitivni-energie",
+    "motivational-work-phrases": "motivacni-hlasky-do-prace",
+    "why-positive-phrases-help-stress": "proc-pozitivni-vety-pomahaji-stres",
+  },
+};
 
 function escapeHtml(value) {
   return String(value)
@@ -74,6 +94,21 @@ function markdownToHtml(markdown) {
   return htmlParts.join("");
 }
 
+function normalizeSlug(rawSlug, lang) {
+  const value = String(rawSlug || "").trim().replace(/^\/+|\/+$/g, "");
+  if (!value) return "";
+
+  if (lang === "en") {
+    if (value.startsWith("en/blog/")) return value.replace(/^en\/blog\//, "");
+    if (value.startsWith("blog/")) return value.replace(/^blog\//, "");
+    return value;
+  }
+
+  if (value.startsWith("en/blog/")) return value.replace(/^en\/blog\//, "");
+  if (value.startsWith("blog/")) return value.replace(/^blog\//, "");
+  return value;
+}
+
 function parseFrontmatter(content) {
   const match = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
   if (!match) return { title: "Blog", meta_description: "Přidej si do dne krátkou motivační hlášku.", body: content };
@@ -98,20 +133,21 @@ function parseFrontmatter(content) {
   };
 }
 
-function getBlogPosts() {
-  if (!fs.existsSync(BLOG_DIR)) return [];
+function getBlogPosts(lang) {
+  const blogDir = BLOG_DIRS[lang] || BLOG_DIRS.cs;
+  if (!fs.existsSync(blogDir)) return [];
 
   return fs
-    .readdirSync(BLOG_DIR)
+    .readdirSync(blogDir)
     .filter((file) => file.endsWith(".md"))
     .sort()
     .map((file) => {
-      const filePath = path.join(BLOG_DIR, file);
+      const filePath = path.join(blogDir, file);
       const content = fs.readFileSync(filePath, "utf8");
       const parsed = parseFrontmatter(content);
       return {
         fileName: file,
-        slug: parsed.slug || file.replace(/\.md$/, ""),
+        slug: normalizeSlug(parsed.slug || file.replace(/\.md$/, ""), lang),
         title: parsed.title,
         meta_description: parsed.meta_description,
         body: parsed.body,
@@ -119,33 +155,102 @@ function getBlogPosts() {
     });
 }
 
-function renderBlogPage({ title, description, body, currentPath, posts }) {
+function getAlternateBlogPath(currentSlug, currentLang) {
+  if (!currentSlug) return currentLang === "en" ? "/blog" : "/en/blog";
+
+  if (currentLang === "en") {
+    const csSlug = BLOG_SLUG_MAP.en[currentSlug];
+    return csSlug ? `/blog/${csSlug}` : "/blog";
+  }
+
+  const enSlug = BLOG_SLUG_MAP.cs[currentSlug];
+  return enSlug ? `/en/blog/${enSlug}` : "/en/blog";
+}
+
+function getLanguageSwitcher(currentLang, currentSlug) {
+  const activeHref = currentLang === "en" ? `/en/blog/${currentSlug || ""}`.replace(/\/$/, "") : `/blog/${currentSlug || ""}`.replace(/\/$/, "");
+  const alternateHref = getAlternateBlogPath(currentSlug, currentLang);
+  const activeLabel = currentLang === "en" ? "EN" : "CZ";
+  const alternateLabel = currentLang === "en" ? "CZ" : "EN";
+  const activeClass = currentLang === "en" ? ' class="active"' : ' class="active"';
+
+  return `
+    <div class="uiLang blog-ui-lang" aria-label="Blog language switch">
+      <a href="${activeHref}"${activeClass}>${activeLabel}</a>
+      <a href="${alternateHref}">${alternateLabel}</a>
+    </div>
+  `;
+}
+
+function getUiCopy(lang) {
+  return lang === "en"
+    ? {
+        back: "← back to homepage",
+        readMore: "Read article →",
+        otherArticles: "More articles",
+        home: "Home",
+        privacy: "Privacy",
+        terms: "Terms",
+        contact: "Contact",
+        intro: "This blog collects short articles about improving your mood, choosing the right phrase, and starting the day with calm.",
+        indexTitle: "Fantastickej.cz blog",
+        indexDescription: "Short articles about motivational phrases, mood, and everyday positive energy.",
+        notFoundTitle: "Article not found",
+        notFoundDescription: "The requested article does not exist.",
+        notFoundBody: '<p>The article you were looking for could not be found. Please go back to the blog or the homepage.</p>',
+      }
+    : {
+        back: "← zpět na hlavní stránku",
+        readMore: "Číst článek →",
+        otherArticles: "Další články",
+        home: "Domů",
+        privacy: "Soukromí",
+        terms: "Podmínky",
+        contact: "Kontakt",
+        intro: "Na tomto blogu najdeš krátké články o tom, jak si zlepšit náladu, vybrat správnou hlášku a začít den s klidem.",
+        indexTitle: "Blog Fantastickej.cz",
+        indexDescription: "Krátké články o motivačních hláškách, náladě a každodenní pozitivní energii.",
+        notFoundTitle: "Článek nebyl nalezen",
+        notFoundDescription: "Požadovaný článek neexistuje.",
+        notFoundBody: '<p>Hledaný článek nebyl nalezen. Vraťte se zpět na blog nebo na hlavní stránku.</p>',
+      };
+}
+
+function renderBlogPage({ title, description, body, currentPath, posts, lang, currentSlug }) {
+  const copy = getUiCopy(lang);
   const postList = posts
     .map(
       (post) => `
-        <a class="blog-link-card" href="/blog/${post.slug}">
+        <a class="blog-link-card" href="/${lang === "en" ? "en/" : ""}blog/${post.slug}">
           <h3>${escapeHtml(post.title)}</h3>
           <p>${escapeHtml(post.meta_description)}</p>
-          <span>Číst článek →</span>
+          <span>${copy.readMore}</span>
         </a>
       `
     )
     .join("");
 
+  const alternatePath = getAlternateBlogPath(currentSlug, lang);
+  const alternateHref = `https://fantastickej.cz${alternatePath}`;
+  const currentHref = `https://fantastickej.cz${currentPath}`;
+
   return `<!doctype html>
-<html lang="cs">
+<html lang="${lang === "en" ? "en" : "cs"}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${escapeHtml(title)} • Fantastickej.cz</title>
     <meta name="description" content="${escapeHtml(description)}" />
-    <link rel="canonical" href="https://fantastickej.cz${currentPath}" />
+    <link rel="canonical" href="${currentHref}" />
+    <link rel="alternate" hreflang="cs" href="${lang === "en" ? alternateHref : currentHref}" />
+    <link rel="alternate" hreflang="en" href="${lang === "cs" ? alternateHref : currentHref}" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <main class="wrap blog-shell">
       <header class="header blog-header">
-        <a class="back-link" href="/">← zpět na hlavní stránku</a>
+        ${getLanguageSwitcher(lang, currentSlug)}
+        <a class="back-link" href="/">${copy.back}</a>
         <h1>${escapeHtml(title)}</h1>
         <p>${escapeHtml(description)}</p>
       </header>
@@ -155,7 +260,7 @@ function renderBlogPage({ title, description, body, currentPath, posts }) {
       </section>
 
       <section class="content-section blog-list-section">
-        <h2>Další články</h2>
+        <h2>${copy.otherArticles}</h2>
         <div class="blog-link-grid">
           ${postList}
         </div>
@@ -163,10 +268,10 @@ function renderBlogPage({ title, description, body, currentPath, posts }) {
 
       <footer class="footer">
         <div class="links">
-          <a href="/">Domů</a>
-          <a href="/privacy.html">Soukromí</a>
-          <a href="/terms.html">Podmínky</a>
-          <a href="/contact.html">Kontakt</a>
+          <a href="/">${copy.home}</a>
+          <a href="/privacy.html">${copy.privacy}</a>
+          <a href="/terms.html">${copy.terms}</a>
+          <a href="/contact.html">${copy.contact}</a>
         </div>
       </footer>
     </main>
@@ -174,30 +279,67 @@ function renderBlogPage({ title, description, body, currentPath, posts }) {
 </html>`;
 }
 
-function renderBlogIndexPage(posts) {
-  const latestPosts = posts.slice(0, 5);
-  const cards = latestPosts
+function renderBlogIndexPage(lang) {
+  const posts = getBlogPosts(lang).slice(0, 5);
+  const intro = lang === "en"
+    ? '<p class="blog-intro">This blog collects short articles about improving your mood, choosing the right phrase, and starting the day with calm.</p>'
+    : '<p class="blog-intro">Na tomto blogu najdeš krátké články o tom, jak si zlepšit náladu, vybrat správnou hlášku a začít den s klidem.</p>';
+
+  const postList = posts
     .map(
       (post) => `
-        <a class="blog-link-card" href="/blog/${post.slug}">
+        <a class="blog-link-card" href="/${lang === "en" ? "en/" : ""}blog/${post.slug}">
           <h3>${escapeHtml(post.title)}</h3>
           <p>${escapeHtml(post.meta_description)}</p>
-          <span>Číst článek →</span>
+          <span>${lang === "en" ? "Read article →" : "Číst článek →"}</span>
         </a>
       `
     )
     .join("");
 
-  return renderBlogPage({
-    title: "Blog Fantastickej.cz",
-    description: "Krátké články o motivačních hláškách, náladě a každodenní pozitivní energii.",
-    body: '<p class="blog-intro">Na tomto blogu najdeš krátké články o tom, jak si zlepšit náladu, vybrat správnou hlášku a začít den s klidem.</p>',
-    currentPath: "/blog",
-    posts: latestPosts,
-  }).replace(
-    '<section class="card blog-card">\n        <p class="blog-intro">Na tomto blogu najdeš krátké články o tom, jak si zlepšit náladu, vybrat správnou hlášku a začít den s klidem.</p>\n      </section>',
-    '<section class="card blog-card">\n        <p class="blog-intro">Na tomto blogu najdeš krátké články o tom, jak si zlepšit náladu, vybrat správnou hlášku a začít den s klidem.</p>\n      </section>'
-  );
+  return `<!doctype html>
+<html lang="${lang === "en" ? "en" : "cs"}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${lang === "en" ? "Fantastickej.cz blog" : "Blog Fantastickej.cz"} • Fantastickej.cz</title>
+    <meta name="description" content="${lang === "en" ? "Short articles about motivational phrases, mood, and everyday positive energy." : "Krátké články o motivačních hláškách, náladě a každodenní pozitivní energii."}" />
+    <link rel="canonical" href="https://fantastickej.cz/${lang === "en" ? "en/" : ""}blog" />
+    <link rel="alternate" hreflang="cs" href="https://fantastickej.cz/blog" />
+    <link rel="alternate" hreflang="en" href="https://fantastickej.cz/en/blog" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="wrap blog-shell">
+      <header class="header blog-header">
+        ${getLanguageSwitcher(lang)}
+        <a class="back-link" href="/">${lang === "en" ? "← back to homepage" : "← zpět na hlavní stránku"}</a>
+        <h1>${lang === "en" ? "Fantastickej.cz blog" : "Blog Fantastickej.cz"}</h1>
+        <p>${lang === "en" ? "Short articles about motivational phrases, mood, and everyday positive energy." : "Krátké články o motivačních hláškách, náladě a každodenní pozitivní energii."}</p>
+      </header>
+
+      <section class="card blog-card">
+        ${intro}
+      </section>
+
+      <section class="content-section blog-list-section">
+        <h2>${lang === "en" ? "More articles" : "Další články"}</h2>
+        <div class="blog-link-grid">
+          ${postList}
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="links">
+          <a href="/">${lang === "en" ? "Home" : "Domů"}</a>
+          <a href="/privacy.html">${lang === "en" ? "Privacy" : "Soukromí"}</a>
+          <a href="/terms.html">${lang === "en" ? "Terms" : "Podmínky"}</a>
+          <a href="/contact.html">${lang === "en" ? "Contact" : "Kontakt"}</a>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>`;
 }
 
 app.get("/api/health", (req, res) => {
@@ -239,12 +381,15 @@ app.get("/api/token", async (req, res) => {
 });
 
 app.get("/blog", (req, res) => {
-  const posts = getBlogPosts();
-  res.type("html").send(renderBlogIndexPage(posts));
+  res.type("html").send(renderBlogIndexPage("cs"));
+});
+
+app.get("/en/blog", (req, res) => {
+  res.type("html").send(renderBlogIndexPage("en"));
 });
 
 app.get("/blog/:slug", (req, res) => {
-  const posts = getBlogPosts();
+  const posts = getBlogPosts("cs");
   const post = posts.find((item) => item.slug === req.params.slug);
 
   if (!post) {
@@ -255,6 +400,8 @@ app.get("/blog/:slug", (req, res) => {
         body: '<p>Hledaný článek nebyl nalezen. Vraťte se zpět na blog nebo na hlavní stránku.</p>',
         currentPath: `/blog/${req.params.slug}`,
         posts,
+        lang: "cs",
+        currentSlug: req.params.slug,
       })
     );
   }
@@ -267,6 +414,40 @@ app.get("/blog/:slug", (req, res) => {
       body: contentHtml,
       currentPath: `/blog/${post.slug}`,
       posts,
+      lang: "cs",
+      currentSlug: post.slug,
+    })
+  );
+});
+
+app.get("/en/blog/:slug", (req, res) => {
+  const posts = getBlogPosts("en");
+  const post = posts.find((item) => item.slug === req.params.slug);
+
+  if (!post) {
+    return res.status(404).type("html").send(
+      renderBlogPage({
+        title: "Article not found",
+        description: "The requested article does not exist.",
+        body: '<p>The article you were looking for could not be found. Please go back to the blog or the homepage.</p>',
+        currentPath: `/en/blog/${req.params.slug}`,
+        posts,
+        lang: "en",
+        currentSlug: req.params.slug,
+      })
+    );
+  }
+
+  const contentHtml = markdownToHtml(post.body);
+  return res.type("html").send(
+    renderBlogPage({
+      title: post.title,
+      description: post.meta_description,
+      body: contentHtml,
+      currentPath: `/en/blog/${post.slug}`,
+      posts,
+      lang: "en",
+      currentSlug: post.slug,
     })
   );
 });
