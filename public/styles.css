@@ -81,11 +81,16 @@ body {
   backdrop-filter: blur(10px);
 }
 
-.uiLang button {
+.uiLang button,
+.uiLang a {
   cursor: pointer;
   border: 0;
   background: transparent;
   color: rgba(255,255,255,.75);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   padding: 8px 12px;
   border-radius: 999px;
@@ -95,13 +100,15 @@ body {
   transition: transform .12s ease, background .12s ease, color .12s ease;
 }
 
-.uiLang button:hover {
+.uiLang button:hover,
+.uiLang a:hover {
   transform: translateY(-1px);
   background: rgba(255,255,255,.08);
   color: white;
 }
 
-.uiLang button.active {
+.uiLang button.active,
+.uiLang a.active {
   background: rgba(255,255,255,.18);
   color: white;
 }

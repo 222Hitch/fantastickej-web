@@ -168,15 +168,16 @@ function getAlternateBlogPath(currentSlug, currentLang) {
 }
 
 function getLanguageSwitcher(currentLang, currentSlug) {
-  const activeHref = currentLang === "en" ? `/en/blog/${currentSlug || ""}`.replace(/\/$/, "") : `/blog/${currentSlug || ""}`.replace(/\/$/, "");
+  const activeHref = currentLang === "en"
+    ? `/en/blog/${currentSlug || ""}`.replace(/\/$/, "")
+    : `/blog/${currentSlug || ""}`.replace(/\/$/, "");
   const alternateHref = getAlternateBlogPath(currentSlug, currentLang);
   const activeLabel = currentLang === "en" ? "EN" : "CZ";
   const alternateLabel = currentLang === "en" ? "CZ" : "EN";
-  const activeClass = currentLang === "en" ? ' class="active"' : ' class="active"';
 
   return `
     <div class="uiLang blog-ui-lang" aria-label="Blog language switch">
-      <a href="${activeHref}"${activeClass}>${activeLabel}</a>
+      <a href="${activeHref}" class="active">${activeLabel}</a>
       <a href="${alternateHref}">${alternateLabel}</a>
     </div>
   `;
