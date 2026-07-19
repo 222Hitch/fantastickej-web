@@ -793,6 +793,20 @@ function detectDefaultVoiceLang() {
   return pick;
 }
 
+function updateBlogCardLinks() {
+  document.querySelectorAll(".blog-link-card[data-blog-slug-cs]").forEach((node) => {
+    const slugCs = node.getAttribute("data-blog-slug-cs");
+    const slugEn = node.getAttribute("data-blog-slug-en");
+    if (!slugCs) return;
+
+    const href = uiLang === "en"
+      ? (slugEn ? `/en/blog/${slugEn}` : `/blog/${slugCs}`)
+      : `/blog/${slugCs}`;
+
+    node.setAttribute("href", href);
+  });
+}
+
 function applyUiLang(lang) {
   uiLang = lang === "cs" ? "cs" : "en";
   localStorage.setItem("uiLang", uiLang);
@@ -810,8 +824,9 @@ function applyUiLang(lang) {
     node.textContent = dict[key];
   });
 
+  updateBlogCardLinks();
   refreshPhraseSelect();
-updateScreen();
+  updateScreen();
 
   if (elStatus) {
     const current = elStatus.textContent.trim();
